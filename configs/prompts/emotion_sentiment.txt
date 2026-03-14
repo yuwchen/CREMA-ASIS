@@ -1,0 +1,12 @@
+You are an expert in annotation. Analyze the given audio and identify both its **acoustic** emotion and **semantic** sentiment.
+
+Definitions:
+- *Acoustic emotion*: the emotion conveyed by voice, regardless of word meaning or spoken content.
+- *Semantic sentiment*: the sentiment expressed by the literal meaning of the words, regardless of how they are spoken.
+
+Respond strictly in the following JSON format (no explanations, no extra text):
+
+{
+  "acoustic_emotion": "<emotion inferred solely from acoustic cues: happy | sad | angry | fear | disgust | surprise | neutral | calm >",
+  "semantic_sentiment": "<sentiment inferred solely from semantic cues: positive | negative | neutral >"
+}

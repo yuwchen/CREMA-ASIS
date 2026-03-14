@@ -1,0 +1,23 @@
+model_name: "Qwen/Qwen2-Audio-7B-Instruct"
+model_type: "qwen2_audio"
+
+extraction:
+  llm:
+    method: "output_hidden_states"
+    selected_layers: [0, 1, 8, 16, 24, -1]
+    pooling_strategies: ["mean", "last", "audio_mean", "text_mean"]
+  whisper:
+    method: "output_hidden_states"
+    selected_layers: [0, 8, 13, 18, 23, 28, 29, 31, 32, -1]
+    pooling_strategies: ["mean", "last"]
+
+training:
+  trainable_components: ["llm", "whisper"]  # LoRA applied to all-linear covers both
+  lora:
+    r: 4
+    alpha: 32
+    use_rslora: true
+    target_modules: "all-linear"
+    dropout: 0.1
+    bias: "none"
+    task_type: "CAUSAL_LM"
