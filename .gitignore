@@ -1,0 +1,13 @@
+# notebook
+.ipynb_checkpoints/
+
+# python
+__pycache__/
+
+# data
+PennFudanPed/
+
+# logs
+logs/
+
+finetuned_models/
