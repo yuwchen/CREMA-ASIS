@@ -10,6 +10,13 @@ Usage:
         --datasets cremad_annotated cremad_base meld
 
     python scripts/finetune.py \
+        --model audio-flamingo3 \
+        --model-config configs/models/audio_flamingo3.yaml \
+        --train-config configs/training/default.yaml \
+        --output-dir finetuned_models/audio-flamingo3-lora \
+        --datasets cremad_annotated cremad_base meld
+
+    python scripts/finetune.py \
         --model kimi-audio \
         --model-config configs/models/kimi_audio.yaml \
         --train-config configs/training/default.yaml \
@@ -47,7 +54,7 @@ def main():
     parser = argparse.ArgumentParser(description="LoRA fine-tuning")
     parser.add_argument(
         "--model", required=True,
-        choices=["qwen2-audio", "kimi-audio", "flamingo3"],
+        choices=["qwen2-audio", "kimi-audio", "audio-flamingo3"],
     )
     parser.add_argument("--model-config", required=True, help="Model YAML config")
     parser.add_argument("--train-config", required=True, help="Training YAML config")

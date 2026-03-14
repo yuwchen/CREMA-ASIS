@@ -120,7 +120,7 @@ class QwenAudioDataCollator(BaseAudioDataCollator):
 # Audio-Flamingo3 collator
 # ---------------------------------------------------------------------------
 
-class FlamingoAudioDataCollator(BaseAudioDataCollator):
+class AudioFlamingoAudioDataCollator(BaseAudioDataCollator):
     """Collator for ``AudioFlamingo3ForConditionalGeneration``.
 
     Audio is zero-padded to a fixed 30 s window (480 000 samples at 16 kHz)

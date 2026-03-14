@@ -70,7 +70,7 @@ def run_finetuning(
     """Run LoRA fine-tuning for any supported model.
 
     Args:
-        model_type: One of ``"qwen2-audio"``, ``"kimi-audio"``, ``"flamingo3"``.
+        model_type: One of ``"qwen2-audio"``, ``"kimi-audio"``, ``"audio-flamingo3"``.
         model_config_path: Path to model YAML config.
         train_config_path: Path to training YAML config.
         train_dataset: List of ``{"audio_path": ..., "target": ...}`` dicts,
@@ -102,7 +102,7 @@ def run_finetuning(
     # Store back (important for Kimi where ALM is the trainable part)
     if model_type == "kimi-audio":
         audio_model.model.alm = trainable
-    elif model_type in ("qwen2-audio", "flamingo3"):
+    elif model_type in ("qwen2-audio", "audio-flamingo3"):
         audio_model.model = trainable
 
     # -- Collator --

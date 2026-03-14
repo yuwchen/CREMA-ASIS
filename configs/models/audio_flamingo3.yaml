@@ -1,0 +1,28 @@
+model_name: "nvidia/audio-flamingo-3-hf"
+model_type: "audio-flamingo3"
+
+extraction:
+  llm:
+    method: "hooks"
+    selected_layers: [0, 1, 6, 13, 20, 27]
+    pooling_strategies: ["mean", "last"]
+    extra_hooks:
+      - name: "whisper"
+        target: "audio_tower"
+      - name: "projector"
+        target: "multi_modal_projector"
+
+training:
+  trainable_components: ["llm", "whisper"]  # Both trained
+  audio_padding:
+    max_samples: 480000  # 30s at 16kHz
+    sampling_rate: 16000
+    max_feature_len: 750
+  lora:
+    r: 4
+    alpha: 32
+    use_rslora: true
+    target_modules: "all-linear"
+    dropout: 0.1
+    bias: "none"
+    task_type: "CAUSAL_LM"

@@ -8,7 +8,7 @@ from src.models.base import AudioModel
 MODEL_REGISTRY: dict[str, type[AudioModel]] = {
     "qwen2-audio": None,
     "kimi-audio": None,
-    "flamingo3": None,
+    "audio-flamingo3": None,
 }
 
 
@@ -16,7 +16,7 @@ def get_model(name: str, **kwargs) -> AudioModel:
     """Instantiate a model wrapper by short name.
 
     Args:
-        name: One of ``"qwen2-audio"``, ``"kimi-audio"``, ``"flamingo3"``.
+        name: One of ``"qwen2-audio"``, ``"kimi-audio"``, ``"audio-flamingo3"``.
         **kwargs: Forwarded to the model constructor.
 
     Returns:
@@ -40,9 +40,9 @@ def get_model(name: str, **kwargs) -> AudioModel:
     if name == 'kimi-audio':
         from src.models.kimi_audio import KimiAudioModel
         MODEL_REGISTRY[name] = KimiAudioModel
-    if name == 'flamingo3':
-        from src.models.flamingo3 import Flamingo3Model
-        MODEL_REGISTRY[name] = Flamingo3Model
+    if name == 'audio-flamingo3':
+        from src.models.audio_flamingo3 import AudioFlamingo3Model
+        MODEL_REGISTRY[name] = AudioFlamingo3Model
         
     
     return MODEL_REGISTRY[name](**kwargs)
