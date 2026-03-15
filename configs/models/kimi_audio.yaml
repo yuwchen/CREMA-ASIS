@@ -1,0 +1,38 @@
+model_name: "moonshotai/Kimi-Audio-7B-Instruct"
+model_type: "kimi_audio"
+
+extraction:
+  llm:
+    method: "hooks"
+    selected_layers: [0, 1, 6, 13, 20, 27]
+    pooling_strategies: ["mean", "last"]
+    # Hook targets beyond selected LLM layers:
+    extra_hooks:
+      - name: "whisper"
+        target: "prompt_manager.whisper_model.speech_encoder"
+      - name: "projector"
+        target: "alm.model.vq_adaptor"
+      - name: "MIMO"
+        target: "alm.model.mimo_layers.0"
+
+training:
+  trainable_components: ["llm"]  # Only ALM is trained, not whisper
+  lora:
+    r: 4
+    alpha: 32
+    use_rslora: true
+    target_modules: "all-linear"
+    dropout: 0.1
+    bias: "none"
+    task_type: "CAUSAL_LM"
+
+inference:
+  sampling_params:
+    audio_temperature: 0.8
+    audio_top_k: 10
+    text_temperature: 0.0
+    text_top_k: 5
+    audio_repetition_penalty: 1.0
+    audio_repetition_window_size: 64
+    text_repetition_penalty: 1.0
+    text_repetition_window_size: 16
