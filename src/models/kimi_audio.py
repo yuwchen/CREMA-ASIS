@@ -166,6 +166,10 @@ class KimiAudioEmbeddingExtractor:
     """
 
     def __init__(self, model_path: str, selected_layers: list[int]):
+        import sys, pathlib
+        _third_party = pathlib.Path(__file__).resolve().parents[2] / "third_party"
+        if str(_third_party) not in sys.path:
+            sys.path.insert(0, str(_third_party))
         from kimia_infer.api.kimia import KimiAudio
 
         self.kimi = KimiAudio(model_path=model_path, load_detokenizer=False)
