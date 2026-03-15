@@ -5,10 +5,10 @@ extraction:
   llm:
     method: "output_hidden_states"
     selected_layers: [0, 1, 8, 16, 24, -1]
-    pooling_strategies: ["mean", "last", "audio_mean", "text_mean"]
+    pooling_strategies: ["mean", "last"] #, "audio_mean", "text_mean"]
   whisper:
     method: "output_hidden_states"
-    selected_layers: [0, 8, 13, 18, 23, 28, 29, 31, 32, -1]
+    selected_layers: [-1]
     pooling_strategies: ["mean", "last"]
 
 training:

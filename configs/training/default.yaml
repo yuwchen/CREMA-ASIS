@@ -5,7 +5,7 @@ batch_size: 1
 gradient_accumulation_steps: 4
 weight_decay: 0.01
 logging_steps: 0.1
-save_steps: 10
+save_steps: 2500
 eval_steps: 0.1
 eval_strategy: "steps"
 bf16: false

@@ -160,6 +160,7 @@ class Qwen2AudioModel(AudioModel):
         text = self.processor.apply_chat_template(
             conversation, add_generation_prompt=True, tokenize=False
         )
+        # Assuming we only use a single audio input (single turn chat)
         audio_data, _ = librosa.load(audio_path, sr=sr)
         inputs = self.processor(
             text=text, audios=[audio_data], return_tensors="pt",
@@ -175,9 +176,11 @@ class Qwen2AudioModel(AudioModel):
             resolved_layers = [
                 idx if idx >= 0 else total_layers + idx for idx in selected_layers
             ]
+            """
             audio_start, audio_end = self.get_audio_token_range(
                 inputs, all_hidden_states[-1]
             )
+            """
 
             file_embeddings = {}
             for layer_idx in resolved_layers:
@@ -189,7 +192,7 @@ class Qwen2AudioModel(AudioModel):
                     "last": torch.from_numpy(hs[-1]),
                     "mean": torch.from_numpy(hs.mean(axis=0)),
                 }
-
+                """
                 if audio_start is not None and audio_end is not None:
                     audio_emb = hs[audio_start:audio_end, :]
                     pooled["audio_mean"] = torch.from_numpy(audio_emb.mean(axis=0))
@@ -202,9 +205,9 @@ class Qwen2AudioModel(AudioModel):
                 else:
                     pooled["audio_mean"] = pooled["mean"]
                     pooled["text_mean"] = pooled["mean"]
-
+                """
                 file_embeddings[layer_idx] = pooled
-
+                
         return file_embeddings
 
     def extract_whisper_embeddings(
@@ -242,8 +245,11 @@ class Qwen2AudioModel(AudioModel):
         )
         inputs = {k: v.to(device) if torch.is_tensor(v) else v for k, v in inputs.items()}
 
-        audio_encoder = self.model.audio_tower if not hasattr(self.model, 'base_model') \
-            else self.model.base_model.model.audio_tower
+        if hasattr(self.model, 'base_model'):
+            base = self.model.base_model
+            audio_encoder = base.audio_tower if hasattr(base, 'audio_tower') else base.model.audio_tower
+        else:
+            audio_encoder = self.model.audio_tower
         audio_encoder.eval()
 
         with torch.no_grad():
