@@ -58,7 +58,6 @@ class AudioFlamingo3Model(AudioModel):
         audio, _ = librosa.load(audio_path, sr=sr)
 
         conversation = [
-            {"role": "system", "content": "You are a helpful assistant."},
             {
                 "role": "user",
                 "content": [
@@ -198,7 +197,6 @@ class AudioFlamingoEmbeddingExtractor:
         audio, _ = librosa.load(audio_path, sr=sr)
 
         conversation = [
-            {"role": "system", "content": role_prompt},
             {
                 "role": "user",
                 "content": [
