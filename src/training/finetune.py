@@ -87,11 +87,14 @@ def run_finetuning(
 
     # -- Load model --
     audio_model = get_model(model_type, model_name=model_cfg["model_name"])
-    audio_model.load(device="auto")
+    
 
     # -- Kimi-specific preparation --
     if model_type == "kimi-audio":
+        audio_model.load(device="cpu")
         audio_model.prepare_for_training()
+    else:
+        audio_model.load(device="auto")
 
     # -- Apply LoRA --
     lora_config = audio_model.get_lora_config(model_cfg)
@@ -127,6 +130,7 @@ def run_finetuning(
         eval_steps=train_cfg["eval_steps"],
         lr_scheduler_type=train_cfg["lr_scheduler_type"],
         bf16=train_cfg.get("bf16", False),
+        deepspeed=train_cfg.get("deepspeed", None),
         remove_unused_columns=False,
         report_to=train_cfg["report_to"],
         run_name=run_name,

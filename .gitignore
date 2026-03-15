@@ -10,4 +10,8 @@ PennFudanPed/
 # logs
 logs/
 
+# fine-tuned models
 finetuned_models/
+
+# vscode stuff
+.vscode*

@@ -202,12 +202,32 @@ class KimiAudioDataCollator:
     for tokenisation rather than a HuggingFace processor.
     """
 
-    def __init__(self, prompt_manager, kimia_token_offset: int, output_type: str = "text"):
+    def __init__(self, prompt_manager, kimia_token_offset: int,
+                 task_prompt: str = "", output_type: str = "text"):
         self.prompt_manager = prompt_manager
         self.kimia_token_offset = kimia_token_offset
+        self.task_prompt = task_prompt
         self.output_type = output_type
 
+    def _process(self, sample: Dict) -> Dict:
+        """Convert a raw {"audio_path", "target"} sample into tensor fields."""
+        chat = [
+            {"role": "user", "message_type": "text", "content": self.task_prompt},
+            {"role": "user", "message_type": "audio", "content": sample["audio_path"]},
+            {"role": "assistant", "message_type": "text", "content": sample["target"]},
+        ]
+        history = self.prompt_manager.get_prompt(chat, output_type=self.output_type)
+        audio_input_ids, text_input_ids, is_continuous_mask, _, _ = history.to_tensor()
+        return {
+            "audio_input_ids": audio_input_ids.squeeze(0),
+            "text_input_ids": text_input_ids.squeeze(0),
+            "is_continuous_mask": is_continuous_mask.squeeze(0),
+            "audio_features": history.continuous_feature,
+        }
+
     def __call__(self, features: List[Dict]) -> Dict[str, torch.Tensor]:
+        features = [self._process(f) for f in features]
+
         max_audio_len = max(f["audio_input_ids"].shape[0] for f in features)
         max_text_len = max(f["text_input_ids"].shape[0] for f in features)
         batch_size = len(features)

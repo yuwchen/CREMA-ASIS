@@ -8,7 +8,8 @@ logging_steps: 0.1
 save_steps: 10
 eval_steps: 0.1
 eval_strategy: "steps"
-bf16: false
+bf16: true
+deepspeed: "ds_config.json"
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false

@@ -16,10 +16,11 @@ Usage:
         --output-dir finetuned_models/audio-flamingo3-lora \
         --datasets cremad_annotated cremad_base meld
 
-    python scripts/finetune.py \
+    # NOTE: kimi-audio requires deepspeed to run multi-gpu fine-tuning
+    deepspeed --num_gpus=2 scripts/finetune.py \
         --model kimi-audio \
         --model-config configs/models/kimi_audio.yaml \
-        --train-config configs/training/default.yaml \
+        --train-config configs/training/training_kimi_audio.yaml \
         --output-dir finetuned_models/kimi-audio-lora \
         --datasets cremad_annotated cremad_base meld
 """
@@ -66,7 +67,7 @@ def main():
     parser.add_argument("--prompt", default="configs/prompts/emotion_sentiment.txt")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--run-name", default=None)
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()
 
     set_seed(args.seed)
 
