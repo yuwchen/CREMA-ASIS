@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Evaluate base or fine-tuned models on a dataset.
+"""Step 3 and 4: Evaluate base or fine-tuned models on a dataset.
 
 Usage (base model):
     python scripts/evaluate.py \

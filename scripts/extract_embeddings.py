@@ -103,12 +103,12 @@ def main():
     parser.add_argument("--memory-efficient", action="store_true", default=True)
     parser.add_argument("--sample-pct", type=int, default=100)
     parser.add_argument("--device", default="cuda:0")
-    parser.add_argument("--use-float16", action="store_true")
+    parser.add_argument("--not-float16", action="store_true")
     args = parser.parse_args()
 
     model_cfg = load_yaml(args.model_config)
     prompt = load_prompt(args.prompt)
-    use_float16 = args.use_float16
+    use_float16 = not args.not_float16
     use_lora = args.lora_path is not None
 
     # -- Determine selected layers from config --

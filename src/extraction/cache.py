@@ -21,6 +21,53 @@ from tqdm import tqdm
 # Cache path generation
 # ---------------------------------------------------------------------------
 
+def get_legacy_cache_path(
+    model_name: str,
+    data_identifier: str,
+    prompt_type: str,
+    selected_layers: list,
+    use_float16: bool = True,
+    use_lora: bool = False,
+    lora_path: Optional[str] = None,
+    cache_dir: str = "qwen2_layer_embedding_cache",
+) -> str:
+    """Generate a cache path compatible with the old extraction format (v3).
+
+    Use this to load caches produced by the legacy ``get_cache_path`` that
+    used global ``SELECTED_LAYERS`` / ``USE_FLOAT16`` constants, a ``_v3``
+    key suffix, and ``_selective.pkl`` filenames.
+
+    Args:
+        model_name: Model name as it appeared in the old cache key.
+        data_identifier: CSV basename without extension (no split suffix).
+        prompt_type: ``"audio_only"`` or ``"audio_text"``.
+        selected_layers: Layer indices used during extraction.
+        use_float16: Whether embeddings were stored in FP16.
+        use_lora: Whether LoRA was applied.
+        lora_path: Path to LoRA checkpoint (used in hash if use_lora=True).
+        cache_dir: Legacy cache directory (default ``qwen2_layer_embedding_cache``).
+
+    Returns:
+        Path to the legacy ``.pkl`` cache file.
+    """
+    layers_str = "_".join(map(str, selected_layers))
+    dtype_str = "fp16" if use_float16 else "fp32"
+
+    if use_lora and lora_path:
+        lora_name = os.path.basename(lora_path)
+        cache_key = f"{model_name}_{data_identifier}_{prompt_type}_{dtype_str}_{layers_str}_lora_{lora_name}_v3"
+    else:
+        cache_key = f"{model_name}_{data_identifier}_{prompt_type}_{dtype_str}_{layers_str}_base_v3"
+
+    cache_hash = hashlib.md5(cache_key.encode()).hexdigest()[:8]
+    os.makedirs(cache_dir, exist_ok=True)
+
+    lora_tag = "lora_" if use_lora else ""
+    filename = f"embeddings_{lora_tag}{cache_hash}_{prompt_type}_{dtype_str}_selective.pkl"
+    print(f"Legacy cache file: {filename}")
+    return os.path.join(cache_dir, filename)
+
+
 def get_cache_path(
     model_name: str,
     data_identifier: str,

@@ -1,0 +1,12 @@
+pooling_strategies: ["mean", "last"]
+learning_rates: [5.0e-2, 1.0e-2, 5.0e-3, 1.0e-3]
+batch_size: 64
+num_epochs: 20
+use_scheduler: true
+seeds: [0, 1, 2, 3, 4]
+
+extraction:
+  use_float16: true
+  save_every_n_files: 3000
+  memory_efficient: true
+  prompt_type: "audio_text"
