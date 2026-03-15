@@ -13,5 +13,10 @@ logs/
 # fine-tuned models
 finetuned_models/
 
+# results
+embedding_cache/
+probe_results/
+results/
+
 # vscode stuff
 .vscode*
