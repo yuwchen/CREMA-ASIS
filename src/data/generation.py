@@ -9,6 +9,12 @@ from __future__ import annotations
 import pathlib
 import sys
 
+_third_party = pathlib.Path(__file__).resolve().parents[2] / "third_party"
+if str(_third_party) not in sys.path:
+    sys.path.insert(0, str(_third_party))
+
+from indextts.infer_v2 import IndexTTS2
+
 
 def infer_sample(
     tts,
@@ -56,11 +62,6 @@ def generate_sample(
         use_cuda_kernel: Whether to use custom CUDA kernels.
         use_deepspeed: Whether to use DeepSpeed.
     """
-    _third_party = pathlib.Path(__file__).resolve().parents[2] / "third_party"
-    if str(_third_party) not in sys.path:
-        sys.path.insert(0, str(_third_party))
-    from indextts.infer_v2 import IndexTTS2
-
     tts = IndexTTS2(
         cfg_path=cfg_path,
         model_dir=model_dir,
