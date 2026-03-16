@@ -90,7 +90,7 @@ The pipeline runs in roughly this order:
 
 1. Generate synthetic audio
 2. Filter by acoustic quality
-3. Fine-tune (optional)
+3. Fine-tune
 4. Evaluate
 5. Extract embeddings
 6. Run probing
