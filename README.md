@@ -385,6 +385,10 @@ python scripts/run_probing.py \
     --results-dir probe_results
 ```
 
+## Model Weights For Reproducability
+To facilitate reproducibility, we provide our fine-tuned LoRA weights under `weights_used_for_study/` 
+
+
 
 ## TODOs
 * **TODO**: Unify qwen2-audio feature extraction to be similar to Audio-Flamingo3 and Kimi-Audio by using forward hooks instead of relying on output embeddings from transformers. Reduces the forward pass of the audio encoder by half.
