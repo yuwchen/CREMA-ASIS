@@ -49,7 +49,7 @@ from src.utils.io import load_yaml, load_prompt
 
 
 def _build_extract_fn(model_type, component, audio_model, selected_layers, prompt,
-                      use_float16, device):
+                      use_float16, device, lora_path=None):
     """Return a callable ``extract_fn(audio_path) -> dict``."""
 
     if model_type == "qwen2-audio" and component == "llm":
@@ -70,7 +70,7 @@ def _build_extract_fn(model_type, component, audio_model, selected_layers, promp
         from src.models.kimi_audio import KimiAudioEmbeddingExtractor
         extractor = KimiAudioEmbeddingExtractor(
             model_path=audio_model.model_name,
-            selected_layers=selected_layers,
+            selected_layers=selected_layers, lora_path=lora_path,
         )
         # Optional LoRA
         return lambda path: extractor.extract_file(path, prompt, use_float16=use_float16)
@@ -132,7 +132,7 @@ def main():
     # -- Build extract function --
     extract_fn = _build_extract_fn(
         args.model, args.component, audio_model, selected_layers,
-        prompt, use_float16, args.device,
+        prompt, use_float16, args.device, lora_path=args.lora_path
     )
 
     # -- Extract for each split --

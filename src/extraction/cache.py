@@ -52,12 +52,13 @@ def get_legacy_cache_path(
     """
     layers_str = "_".join(map(str, selected_layers))
     dtype_str = "fp16" if use_float16 else "fp32"
+    model_shortname = model_name.split("/")[-1] if "/" in model_name else model_name
 
     if use_lora and lora_path:
         lora_name = os.path.basename(lora_path)
-        cache_key = f"{model_name}_{data_identifier}_{prompt_type}_{dtype_str}_{layers_str}_lora_{lora_name}_v3"
+        cache_key = f"{model_shortname}_{data_identifier}_{prompt_type}_{dtype_str}_{layers_str}_lora_{lora_name}_v3"
     else:
-        cache_key = f"{model_name}_{data_identifier}_{prompt_type}_{dtype_str}_{layers_str}_base_v3"
+        cache_key = f"{model_shortname}_{data_identifier}_{prompt_type}_{dtype_str}_{layers_str}_base_v3"
 
     cache_hash = hashlib.md5(cache_key.encode()).hexdigest()[:8]
     os.makedirs(cache_dir, exist_ok=True)

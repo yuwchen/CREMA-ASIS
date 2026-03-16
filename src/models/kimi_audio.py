@@ -165,7 +165,7 @@ class KimiAudioEmbeddingExtractor:
     - The MIMO layer
     """
 
-    def __init__(self, model_path: str, selected_layers: list[int]):
+    def __init__(self, model_path: str, selected_layers: list[int], lora_path: Optional[str] = None):
         import sys, pathlib
         _third_party = pathlib.Path(__file__).resolve().parents[2] / "third_party"
         if str(_third_party) not in sys.path:
@@ -184,6 +184,9 @@ class KimiAudioEmbeddingExtractor:
         self.alm.eval()
         self.prompt_manager.whisper_model.speech_encoder.eval()
         self._register_hooks()
+
+        if lora_path:
+            self.load_lora(lora_path)
 
     # -- Hook management ---------------------------------------------------
 
