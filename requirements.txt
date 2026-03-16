@@ -1,0 +1,22 @@
+# PyTorch must be installed separately to match your CUDA version.
+# See https://pytorch.org/get-started/locally/ for the right command.
+# The version used in development: torch==2.7.0
+
+# Core
+numpy==1.26.4
+pandas==2.1.1
+PyYAML==6.0
+tqdm==4.67.1
+soundfile==0.13.1
+librosa==0.11.0
+scikit-learn==1.3.2
+pyarrow==21.0.0
+
+# Models & training
+# transformers version is model-dependent — see README setup section
+transformers==4.46.1
+peft==0.18.1
+accelerate==1.13.0
+
+# Only needed for Kimi-Audio multi-GPU fine-tuning
+# deepspeed

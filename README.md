@@ -31,8 +31,13 @@ CREMA-ASIS/
 ---
 
 ## Setup
+First, install PyTorch for your CUDA version from https://pytorch.org/get-started/locally/, then install the base dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-The three models have different dependency requirements, so you'll need to install them separately depending on which model you want to run.
+The three models have conflicting `transformers` requirements, so the version you need depends on which model you want to run. The `requirements.txt` pins `transformers==4.46.1` (Qwen2-Audio). Override it for the other models as follows.
+
 
 **Qwen2-Audio**
 ```bash
@@ -47,6 +52,12 @@ pip install --upgrade "git+https://github.com/huggingface/transformers" accelera
 **Kimi-Audio**
 
 Follow the official setup instructions at https://github.com/MoonshotAI/Kimi-Audio/tree/master?tab=readme-ov-file#getting-started
+
+For Kimi-Audio multi-GPU fine-tuning, also install DeepSpeed:
+```bash
+pip install deepspeed
+```
+
 
 **IndexTTS2** (only needed for data generation)
 
