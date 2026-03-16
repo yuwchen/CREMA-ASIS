@@ -11,7 +11,7 @@ When Vocal Tone and Literal Meaning Diverge: An Acoustic–Semantic Incongruity 
 * **TODO**
 
 # Setup
-Different models require different transformer versions.
+Different models require different setup.
 Qwen2-audio:
 ```
 python -m pip install transformers==4.46.1
@@ -26,5 +26,10 @@ Kimi-Audio
 
 Use the kimi-audio setup.
 See `https://github.com/MoonshotAI/Kimi-Audio/tree/master?tab=readme-ov-file#getting-started`
+
+IndexTTS2:
+
+Use IndexTTS2 setup. 
+See `https://github.com/index-tts/index-tts`
 
 Run with deepspeed to enable multi-GPU training.
