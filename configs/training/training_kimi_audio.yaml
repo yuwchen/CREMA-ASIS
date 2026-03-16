@@ -9,7 +9,7 @@ save_steps: 2500
 eval_steps: 0.1
 eval_strategy: "steps"
 bf16: true
-deepspeed: "ds_config.json"
+deepspeed: "configs/training/ds_config.json"
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false

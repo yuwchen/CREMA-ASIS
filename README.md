@@ -3,7 +3,9 @@
 Code for the study *When Vocal Tone and Literal Meaning Diverge: An Acoustic–Semantic Incongruity Study for Large Audio–Language Models*.
 
 The project investigates whether large audio-language models (LALMs) can detect incongruity between a speaker's emotional tone and the literal meaning of what they say.
+
 We introduce CREMA-ASIS, a dataset of ~77k synthetic utterances where acoustic emotion and semantic sentiment are independently controlled, covering both incongruous (e.g., angry voice saying something positive) and congruous conditions. 
+
 Using this dataset, we evaluate three models: (1) Qwen2-Audio, (2) Audio-Flamingo3, and (3) Kimi-Audio, both off-the-shelf and after LoRA fine-tuning. We also perform linear probing of internal representations to understand how these models process acoustic vs. semantic information.
 
 ---
