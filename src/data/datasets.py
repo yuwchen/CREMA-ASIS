@@ -56,7 +56,7 @@ class DatasetConfig:
 # ---------------------------------------------------------------------------
 # Pre-defined configs for known datasets
 # ---------------------------------------------------------------------------
-"""
+
 CREMAD_ANNOTATED = DatasetConfig(
     csv_path="data/cremad_all_clean_w_sad_filtered.csv",
     acoustic_column="acoustic",
@@ -76,24 +76,24 @@ CREMAD_BASE = DatasetConfig(
 )
 
 MELD_TRAIN = DatasetConfig(
-    csv_path="data/MELD_Raw/meld_train.csv",
+    csv_path="data/MELD.Raw/meld_train.csv",
     acoustic_column="Emotion",
     semantic_column="Sentiment",
     filepath_column=None,
-    wav_dir="data/MELD_Raw/train_wav",
+    wav_dir="data/MELD.Raw/train_wav",
     wav_column="wavname",
 )
 
 MELD_VAL = DatasetConfig(
-    csv_path="data/MELD_Raw/meld_val.csv",
+    csv_path="data/MELD.Raw/meld_val.csv",
     acoustic_column="Emotion",
     semantic_column="Sentiment",
     filepath_column=None,
-    wav_dir="data/MELD_Raw/dev_wav",
+    wav_dir="data/MELD.Raw/dev_wav",
     wav_column="wavname",
 )
-"""
 
+"""
 # Ran locally
 CREMAD_ANNOTATED = DatasetConfig(
     csv_path="../emotional_tts/cremad_all_clean_w_sad_filtered.csv",
@@ -132,7 +132,7 @@ MELD_VAL = DatasetConfig(
     wav_dir="../emotional_tts/MELD/MELD.Raw",
     wav_column="Audio_Path",
 )
-
+"""
 
 # ---------------------------------------------------------------------------
 # Loading helpers
