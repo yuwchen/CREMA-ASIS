@@ -19,7 +19,7 @@ Usage:
         --data-dir data/cremad-sync/cremad-sync-wsad/ \
         --cache-dir embedding_cache \
         --results-dir probe_results \
-        --lora-path finetuned_models/kimi-lora/checkpoint-7500
+        --lora-path finetuned_models/kimi-audio-lora/checkpoint
 """
 
 import argparse

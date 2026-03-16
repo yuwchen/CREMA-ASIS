@@ -121,7 +121,7 @@ python scripts/generate_data_from_csv.py \
     --cfg checkpoints/config.yaml \
     --model-dir checkpoints \
     --speaker-dir data/cremad-sync/cremad-sync-wsad \
-    --csv CREMA-ASIS-meta.csv \
+    --csv CREMA-ASIS_meta.csv \
     --output-dir data/samples \
     --skip-existing
 ```
@@ -197,7 +197,7 @@ python scripts/evaluate.py \
 python scripts/evaluate.py \
     --model qwen2-audio \
     --model-config configs/models/qwen2_audio.yaml \
-    --lora-path finetuned_models/qwen2-audio-lora/checkpoint-12500 \
+    --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
     --data data/crema_d_test.csv \
     --output results/qwen2_lora.csv
 ```
@@ -249,7 +249,7 @@ python scripts/extract_embeddings.py \
 python scripts/extract_embeddings.py \
     --model qwen2-audio --component llm \
     --model-config configs/models/qwen2_audio.yaml \
-    --lora-path finetuned_models/qwen2-audio-lora/checkpoint-12500 \
+    --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
     --csv data/cremad_all_clean_w_sad_filtered.csv \
     --data-dir data/cremad-sync/cremad-sync-wsad
 ```
@@ -268,7 +268,7 @@ python scripts/extract_embeddings.py \
 python scripts/extract_embeddings.py \
     --model audio-flamingo3 --component llm \
     --model-config configs/models/audio_flamingo3.yaml \
-    --lora-path finetuned_models/audio-flamingo3-lora/checkpoint-5000 \
+    --lora-path finetuned_models/audio-flamingo3-lora/checkpoint \
     --csv data/cremad_all_clean_w_sad_filtered.csv \
     --data-dir data/cremad-sync/cremad-sync-wsad
 ```
@@ -287,7 +287,7 @@ python scripts/extract_embeddings.py \
 python scripts/extract_embeddings.py \
     --model kimi-audio --component llm \
     --model-config configs/models/kimi_audio.yaml \
-    --lora-path finetuned_models/kimi-audio-lora/checkpoint-7500 \
+    --lora-path finetuned_models/kimi-audio-lora/checkpoint \
     --csv data/cremad_all_clean_w_sad_filtered.csv \
     --data-dir data/cremad-sync/cremad-sync-wsad
 ```
@@ -328,7 +328,7 @@ python scripts/run_probing.py \
     --model qwen2-audio --component llm \
     --model-config configs/models/qwen2_audio.yaml \
     --probe-config configs/probing/default.yaml \
-    --lora-path finetuned_models/qwen2-audio-lora/checkpoint-12500 \
+    --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
     --csv data/cremad_all_clean_w_sad_filtered.csv \
     --data-dir data/cremad-sync/cremad-sync-wsad \
     --cache-dir embedding_cache \
@@ -353,7 +353,7 @@ python scripts/run_probing.py \
     --model audio-flamingo3 --component llm \
     --model-config configs/models/audio_flamingo3.yaml \
     --probe-config configs/probing/default.yaml \
-    --lora-path finetuned_models/audio-flamingo3-lora/checkpoint-5000 \
+    --lora-path finetuned_models/audio-flamingo3-lora/checkpoint \
     --csv data/cremad_all_clean_w_sad_filtered.csv \
     --data-dir data/cremad-sync/cremad-sync-wsad \
     --cache-dir embedding_cache \
@@ -378,7 +378,7 @@ python scripts/run_probing.py \
     --model kimi-audio --component llm \
     --model-config configs/models/kimi_audio.yaml \
     --probe-config configs/probing/default.yaml \
-    --lora-path finetuned_models/kimi-audio-lora/checkpoint-7500 \
+    --lora-path finetuned_models/kimi-audio-lora/checkpoint \
     --csv data/cremad_all_clean_w_sad_filtered.csv \
     --data-dir data/cremad-sync/cremad-sync-wsad \
     --cache-dir embedding_cache \

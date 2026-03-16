@@ -12,7 +12,7 @@ Usage (fine-tuned with LoRA):
     python scripts/evaluate.py \
         --model qwen2-audio \
         --model-config configs/models/qwen2_audio.yaml \
-        --lora-path finetuned_models/qwen2-audio-lora/checkpoint-25000 \
+        --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
         --data data/test.csv \
         --output results/qwen2_lora.csv
 
@@ -20,7 +20,7 @@ Usage (parquet dataset like LISTEN):
     python scripts/evaluate.py \
         --model kimi-audio \
         --model-config configs/models/kimi_audio.yaml \
-        --lora-path finetuned_models/kimi-lora/checkpoint-7500 \
+        --lora-path finetuned_models/kimi-audio-lora/checkpoint \
         --data data/LISTEN/test-00000-of-00001.parquet \
         --data-format parquet \
         --temp-audio-dir LISTEN_audios \

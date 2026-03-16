@@ -23,7 +23,7 @@ Usage (Kimi-Audio with LoRA):
         --model-config configs/models/kimi_audio.yaml \
         --csv data/cremad_all_clean_w_sad_filtered.csv \
         --data-dir data/cremad-sync/cremad-sync-wsad/ \
-        --lora-path finetuned_models/kimi-lora/checkpoint-7500
+        --lora-path finetuned_models/kimi-audio-lora/checkpoint
 
 Usage (Audio-Flamingo3):
     python scripts/extract_embeddings.py \

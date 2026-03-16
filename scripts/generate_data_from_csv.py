@@ -15,7 +15,7 @@ Usage:
         --cfg checkpoints/config.yaml \
         --model-dir checkpoints \
         --speaker-dir ./CREMA-D/AudioWAV_en \
-        --csv CREMA-ASIS-meta.csv \
+        --csv data/CREMA-ASIS_meta.csv \
         --output-dir ./samples \
         [--skip-existing] [--fp16]
 """
