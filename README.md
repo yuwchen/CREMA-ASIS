@@ -9,6 +9,9 @@ We introduce CREMA-ASIS, a dataset of ~77k synthetic utterances where acoustic e
 Using this dataset, we evaluate three models: (1) Qwen2-Audio, (2) Audio-Flamingo3, and (3) Kimi-Audio, both off-the-shelf and after LoRA fine-tuning. We also perform linear probing of internal representations to understand how these models process acoustic vs. semantic information.
 
 ---
+## Dataset
+
+The download link for CREMA-ASIS will be provided upon acceptance.
 
 ## Project structure
 
@@ -392,3 +395,5 @@ To facilitate reproducibility, we provide our fine-tuned LoRA weights under `wei
 
 ## TODOs
 * **TODO**: Unify qwen2-audio feature extraction to be similar to Audio-Flamingo3 and Kimi-Audio by using forward hooks instead of relying on output embeddings from transformers. Reduces the forward pass of the audio encoder by half.
+
+
