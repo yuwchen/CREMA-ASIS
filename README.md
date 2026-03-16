@@ -124,7 +124,7 @@ python scripts/generate_data_from_csv.py \
     --cfg checkpoints/config.yaml \
     --model-dir checkpoints \
     --speaker-dir data/cremad-sync/cremad-sync-wsad \
-    --csv CREMA-ASIS_meta.csv \
+    --csv data/CREMA-ASIS_meta.csv \
     --output-dir data/samples \
     --skip-existing
 ```
