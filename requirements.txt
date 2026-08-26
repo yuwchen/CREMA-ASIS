@@ -20,3 +20,6 @@ accelerate==1.13.0
 
 # Only needed for Kimi-Audio multi-GPU fine-tuning
 # deepspeed
+
+# Only needed for scripts/filter_sentences.py (GPT-4o sentence selection)
+# openai

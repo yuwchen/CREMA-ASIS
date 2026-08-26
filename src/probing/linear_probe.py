@@ -14,7 +14,7 @@ from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -349,18 +349,10 @@ def run_layer_probe_experiment(
                 print(f"  {pooling} test acc: {te_acc:.4f}")
                 del eval_probe, test_loader
 
-        # -- Overall best → retrain on train+val, evaluate on test --
+        # -- Overall best config → retrain from scratch on train, eval on test --
         if best_config is None:
             continue
-        
-        """
-        full_ds = CachedEmbeddingDataset(
-            {**train_embeddings, **val_embeddings},
-            train_idx + val_idx,
-            layer_key, best_config["pooling"],
-            train_files + val_files,
-        )
-        """
+
         full_ds = CachedEmbeddingDataset(
             train_embeddings,
             train_idx,

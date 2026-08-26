@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Step 2: LoRA fine-tuning for any supported model.
+"""Step 3: LoRA fine-tuning for any supported model.
 
 Usage:
     python scripts/finetune.py \

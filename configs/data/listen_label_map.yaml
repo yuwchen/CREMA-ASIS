@@ -1,0 +1,99 @@
+# Label handling for the out-of-domain LISTEN evaluation.
+#
+# Source split:
+# https://huggingface.co/datasets/VibeCheck1/LISTEN_full/blob/main/data/test-00000-of-00001.parquet
+#
+# LISTEN_full is long-format: one row per (sample, question), with columns
+# `id`, `question`, `answer`. The modality is encoded in the question text,
+# so a sample is acoustic or semantic depending on which prompt it was asked.
+
+# Samples whose `id` contains any of these are dropped, to avoid overlap with
+# the corpora used for fine-tuning. Matched as a case-sensitive substring,
+# because the corpus name is embedded in the id (e.g. "CREMA-D_1001_DFA_ANG").
+exclude_id_substrings:
+  - CREMA-D
+  - MELD
+
+# A row belongs to the acoustic task when its `question` is exactly one of
+# these. Matched verbatim; LISTEN reuses a fixed set of prompts.
+acoustic_questions:
+  - "Listening to the voice, what emotion is being expressed?"
+  - "How would you describe the emotional tone of the speaker?"
+  - "What emotion is communicated through the speaker's vocal prosody?"
+  - "What emotional state is reflected in the speaker's voice?"
+  - "Based on the vocal expression, what emotion is the speaker feeling?"
+  - "What emotion does the speaker convey through their tone?"
+  - "What emotion is expressed in the speaker's voice?"
+
+semantic_questions:
+  - "Based solely on the text content, what emotion would you identify?"
+  - "From the semantic content alone, what emotion is being expressed?"
+  - "Reading this text, what emotional state does the speaker appear to be in?"
+  - "Based on the content of this text, what emotion would the person likely be feeling?"
+  - "What emotional tone is conveyed by the literal meaning of this statement?"
+  - "What feeling is suggested by the meaning of these words?"
+  - "What emotion is conveyed by the words in this statement?"
+
+# --- Acoustic task -----------------------------------------------------------
+# Different corpora in LISTEN spell the same emotion differently. This map is
+# applied to the ground-truth answer AND to the model's prediction, so the two
+# sides share one vocabulary.
+acoustic_synonyms:
+  amusement: happy
+  anger: angry
+  disgusted: disgust
+  excited: happy
+  fearful: fear
+  happiness: happy
+  joy: happy
+  pleasant_surprise: surprise
+  sadness: sad
+  surprised: surprise
+
+# Samples are kept only if the normalised answer lands in this list. These are
+# the eight categories the LALM prompt offers, not the five in CREMA-ASIS:
+# the model is scored on the full label space it was asked to choose from.
+acoustic_labels:
+  - happy
+  - sad
+  - angry
+  - fear
+  - disgust
+  - surprise
+  - neutral
+  - calm
+
+# --- Semantic task -----------------------------------------------------------
+# LISTEN's semantic answers are emotion words, while the model predicts a
+# sentiment polarity, so the ground truth is collapsed onto three classes.
+# Anything not listed here is dropped as having no unambiguous polarity.
+semantic_map:
+  amusement: positive
+  anger: negative
+  angry: negative
+  annoyance: negative
+  anxious: negative
+  calm: neutral
+  concern: negative
+  concerned: negative
+  confusion: negative
+  contempt: negative
+  disappointment: negative
+  disgust: negative
+  excitement: positive
+  fear: negative
+  frustated: negative
+  frustration: negative
+  happiness: positive
+  happy: positive
+  neutral: neutral
+  pleasant_surprise: positive
+  pleasantly surprised: positive
+  ridicule: negative
+  sad: negative
+  sadness: negative
+
+semantic_labels:
+  - neutral
+  - positive
+  - negative

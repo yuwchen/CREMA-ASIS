@@ -7,30 +7,30 @@ Usage (Qwen2-Audio LLM layers):
     python scripts/extract_embeddings.py \
         --model qwen2-audio --component llm \
         --model-config configs/models/qwen2_audio.yaml \
-        --csv data/cremad_all_clean_w_sad_filtered.csv \
-        --data-dir data/cremad-sync/cremad-sync-wsad/
+        --csv data/CREMA-ASIS_meta.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad/
 
 Usage (Qwen2-Audio Whisper encoder):
     python scripts/extract_embeddings.py \
         --model qwen2-audio --component whisper \
         --model-config configs/models/qwen2_audio.yaml \
-        --csv data/cremad_all_clean_w_sad_filtered.csv \
-        --data-dir data/cremad-sync/cremad-sync-wsad/
+        --csv data/CREMA-ASIS_meta.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad/
 
 Usage (Kimi-Audio with LoRA):
     python scripts/extract_embeddings.py \
         --model kimi-audio --component llm \
         --model-config configs/models/kimi_audio.yaml \
-        --csv data/cremad_all_clean_w_sad_filtered.csv \
-        --data-dir data/cremad-sync/cremad-sync-wsad/ \
+        --csv data/CREMA-ASIS_meta.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad/ \
         --lora-path finetuned_models/kimi-audio-lora/checkpoint
 
 Usage (Audio-Flamingo3):
     python scripts/extract_embeddings.py \
         --model audio-flamingo3 --component llm \
         --model-config configs/models/audio_flamingo3.yaml \
-        --csv data/cremad_all_clean_w_sad_filtered.csv \
-        --data-dir data/cremad-sync/cremad-sync-wsad/
+        --csv data/CREMA-ASIS_meta.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad/
 """
 
 import argparse
@@ -60,8 +60,9 @@ def _build_extract_fn(model_type, component, audio_model, selected_layers, promp
         return fn
 
     elif model_type == "qwen2-audio" and component == "whisper":
+        # Emits both the audio-tower and multi-modal-projector representations.
         def fn(path):
-            return audio_model.extract_whisper_embeddings(
+            return audio_model.extract_encoder_embeddings(
                 path, selected_layers, prompt, use_float16=use_float16, device=device,
             )
         return fn
@@ -100,7 +101,11 @@ def main():
     parser.add_argument("--prompt", default="configs/prompts/emotion_sentiment.txt")
     parser.add_argument("--cache-dir", default="embedding_cache")
     parser.add_argument("--save-every", type=int, default=500)
-    parser.add_argument("--memory-efficient", action="store_true", default=True)
+    parser.add_argument(
+        "--no-memory-efficient", dest="memory_efficient", action="store_false",
+        default=True,
+        help="Keep every embedding in RAM instead of flushing to disk periodically",
+    )
     parser.add_argument("--sample-pct", type=int, default=100)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--not-float16", action="store_true")

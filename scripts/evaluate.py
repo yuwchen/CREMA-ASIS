@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Step 3 and 4: Evaluate base or fine-tuned models on a dataset.
+"""Step 4: Evaluate base or fine-tuned models on a dataset.
+
+Writes one row per sample with the model's ``acoustic_emotion`` and
+``semantic_sentiment`` predictions.  Score the output with
+``scripts/compute_metrics.py``.
 
 Usage (base model):
     python scripts/evaluate.py \
         --model qwen2-audio \
         --model-config configs/models/qwen2_audio.yaml \
-        --data data/test.csv \
+        --data data/CREMA-ASIS_test.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad \
         --output results/qwen2_base.csv
 
 Usage (fine-tuned with LoRA):
@@ -13,7 +18,8 @@ Usage (fine-tuned with LoRA):
         --model qwen2-audio \
         --model-config configs/models/qwen2_audio.yaml \
         --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
-        --data data/test.csv \
+        --data data/CREMA-ASIS_test.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad \
         --output results/qwen2_lora.csv
 
 Usage (parquet dataset like LISTEN):
@@ -21,7 +27,7 @@ Usage (parquet dataset like LISTEN):
         --model kimi-audio \
         --model-config configs/models/kimi_audio.yaml \
         --lora-path finetuned_models/kimi-audio-lora/checkpoint \
-        --data data/LISTEN/test-00000-of-00001.parquet \
+        --data data/LISTEN/listen_test_mapped.parquet \
         --data-format parquet \
         --temp-audio-dir LISTEN_audios \
         --output results/kimi_lora_LISTEN.csv
@@ -47,8 +53,21 @@ def main():
     parser.add_argument("--lora-path", default=None, help="LoRA checkpoint")
     parser.add_argument("--prompt", default="configs/prompts/emotion_sentiment.txt")
     parser.add_argument("--data-format", default="csv", choices=["csv", "parquet"])
-    parser.add_argument("--audio-column", default="filepath")
+    parser.add_argument(
+        "--data-dir", default=None,
+        help="Directory holding the audio files, joined with --audio-column",
+    )
+    parser.add_argument("--audio-column", default="output_name")
     parser.add_argument("--id-column", default="id")
+    parser.add_argument(
+        "--wer-threshold", type=float, default=0.5,
+        help="Drop rows with wer >= this before inference. "
+             "Only applies when the data has a 'wer' column.",
+    )
+    parser.add_argument(
+        "--no-wer-filter", action="store_true",
+        help="Keep every row regardless of WER",
+    )
     parser.add_argument("--sr", type=int, default=16000)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--temp-audio-dir", default=None)
@@ -64,6 +83,8 @@ def main():
         data_format=args.data_format,
         audio_column=args.audio_column,
         id_column=args.id_column,
+        data_dir=args.data_dir,
+        wer_threshold=None if args.no_wer_filter else args.wer_threshold,
         sr=args.sr,
         device=args.device,
         temp_audio_dir=args.temp_audio_dir,

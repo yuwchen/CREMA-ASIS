@@ -35,13 +35,19 @@ class CachedEmbeddingDataset(Dataset):
         files: Optional[List[str]] = None,
     ):
         if files is not None:
-            embeddings = self._align(embeddings, files)
+            embeddings, labels = self._align(embeddings, files, labels)
 
         self.file_paths = list(embeddings.keys())
         self.embeddings = embeddings
         self.labels = labels
         self.layer_key = layer_key
         self.pooling = pooling
+
+        if len(self.labels) != len(self.file_paths):
+            raise ValueError(
+                f"Label/feature mismatch: {len(self.labels)} labels for "
+                f"{len(self.file_paths)} embeddings."
+            )
 
     # ------------------------------------------------------------------
 
@@ -63,22 +69,38 @@ class CachedEmbeddingDataset(Dataset):
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _align(embeddings: Dict, file_list: List[str]) -> OrderedDict:
-        """Re-order *embeddings* to match *file_list* ordering."""
+    def _align(
+        embeddings: Dict, file_list: List[str], labels: List[int]
+    ) -> tuple[OrderedDict, List[int]]:
+        """Re-order *embeddings* to match *file_list*, dropping missing files.
+
+        Labels are filtered alongside the files.  Dropping a file without
+        dropping its label would shift every later label by one and silently
+        corrupt the probe, so the two are always kept in step.
+        """
+        if len(labels) != len(file_list):
+            raise ValueError(
+                f"Got {len(labels)} labels for {len(file_list)} files; "
+                f"they must be the same length and in the same order."
+            )
+
         aligned = OrderedDict()
+        kept_labels: List[int] = []
         missing = []
-        for fp in file_list:
+        for fp, label in zip(file_list, labels):
             if fp in embeddings:
                 aligned[fp] = embeddings[fp]
+                kept_labels.append(label)
             else:
                 missing.append(fp)
+
         if missing:
-            print(f"WARNING: {len(missing)} files missing from embeddings "
-                  f"(first 5: {missing[:5]})")
+            print(f"WARNING: {len(missing)} files missing from embeddings, "
+                  f"dropped with their labels (first 5: {missing[:5]})")
         extra = set(embeddings.keys()) - set(file_list)
         if extra:
             print(f"WARNING: {len(extra)} extra files in embeddings not in file_list")
-        return aligned
+        return aligned, kept_labels
 
 
 def collate_fn(batch):

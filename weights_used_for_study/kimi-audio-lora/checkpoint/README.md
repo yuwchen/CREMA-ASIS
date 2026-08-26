@@ -1,9 +1,9 @@
 ---
-base_model: /root/.cache/huggingface/hub/models--moonshotai--Kimi-Audio-7B-Instruct/snapshots/9a82a84c37ad9eb1307fb6ed8d7b397862ef9e6b
+base_model: moonshotai/Kimi-Audio-7B-Instruct
 library_name: peft
 pipeline_tag: text-generation
 tags:
-- base_model:adapter:/root/.cache/huggingface/hub/models--moonshotai--Kimi-Audio-7B-Instruct/snapshots/9a82a84c37ad9eb1307fb6ed8d7b397862ef9e6b
+- base_model:adapter:moonshotai/Kimi-Audio-7B-Instruct
 - lora
 - transformers
 ---

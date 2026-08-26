@@ -6,8 +6,8 @@ Usage:
         --model qwen2-audio --component llm \
         --model-config configs/models/qwen2_audio.yaml \
         --probe-config configs/probing/default.yaml \
-        --csv data/cremad_all_clean_w_sad_filtered.csv \
-        --data-dir data/cremad-sync/cremad-sync-wsad/ \
+        --csv data/CREMA-ASIS_meta.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad/ \
         --cache-dir embedding_cache \
         --results-dir probe_results
 
@@ -15,8 +15,8 @@ Usage:
         --model kimi-audio --component llm \
         --model-config configs/models/kimi_audio.yaml \
         --probe-config configs/probing/default.yaml \
-        --csv data/cremad_all_clean_w_sad_filtered.csv \
-        --data-dir data/cremad-sync/cremad-sync-wsad/ \
+        --csv data/CREMA-ASIS_meta.csv \
+        --data-dir data/crema-asis/cremad-sync-wsad/ \
         --cache-dir embedding_cache \
         --results-dir probe_results \
         --lora-path finetuned_models/kimi-audio-lora/checkpoint

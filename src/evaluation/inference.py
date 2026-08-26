@@ -34,8 +34,10 @@ def run_inference(
     output_csv: str,
     lora_path: Optional[str] = None,
     data_format: str = "csv",
-    audio_column: str = "filepath",
+    audio_column: str = "output_name",
     id_column: str = "id",
+    data_dir: Optional[str] = None,
+    wer_threshold: Optional[float] = 0.5,
     sr: int = 16000,
     device: str = "auto",
     temp_audio_dir: Optional[str] = None,
@@ -50,8 +52,14 @@ def run_inference(
         output_csv: Where to write the results CSV.
         lora_path: Optional LoRA checkpoint path.
         data_format: ``"csv"`` or ``"parquet"``.
-        audio_column: Column with file paths (csv) or audio bytes (parquet).
+        audio_column: Column with audio filenames (csv) or audio bytes (parquet).
         id_column: Column with sample identifiers.
+        data_dir: Directory holding the audio files.  When set, each audio path
+            is ``os.path.join(data_dir, row[audio_column])``.  When unset, the
+            column is assumed to already hold a usable path.
+        wer_threshold: Drop rows whose ``wer`` exceeds this before running
+            inference.  Matches the paper's test-set protocol (WER < 0.5).
+            Ignored when the data has no ``wer`` column; pass ``None`` to skip.
         sr: Sampling rate for audio loading.
         device: Device for model loading.
         temp_audio_dir: Directory for temporary WAV files (parquet mode).
@@ -71,6 +79,17 @@ def run_inference(
         df = pd.read_parquet(data_source)
     else:
         df = pd.read_csv(data_source)
+
+    # -- Test-set WER filter --
+    if wer_threshold is not None and "wer" in df.columns:
+        before = len(df)
+        df = df[df["wer"] < wer_threshold]
+        print(f"WER filter (< {wer_threshold}): {before} -> {len(df)} samples")
+
+    # -- Resolve the audio column --
+    if audio_column not in df.columns and "filepath" in df.columns:
+        print(f"Column '{audio_column}' not found; falling back to 'filepath'")
+        audio_column = "filepath"
 
     print(f"Running inference on {len(df)} samples with {model_type}")
 
@@ -95,7 +114,9 @@ def run_inference(
                     sf.write(temp_path, audio, sr, subtype="PCM_16")
                     audio_path = temp_path
             else:
-                audio_path = row[audio_column]
+                audio_path = str(row[audio_column])
+                if data_dir:
+                    audio_path = os.path.join(data_dir, os.path.basename(audio_path))
 
             # Run inference
             response = audio_model.infer(audio_path, prompt)

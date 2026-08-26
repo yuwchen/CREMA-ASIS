@@ -3,7 +3,7 @@
   "alpha_pattern": {},
   "arrow_config": null,
   "auto_mapping": null,
-  "base_model_name_or_path": "/root/.cache/huggingface/hub/models--moonshotai--Kimi-Audio-7B-Instruct/snapshots/9a82a84c37ad9eb1307fb6ed8d7b397862ef9e6b",
+  "base_model_name_or_path": "moonshotai/Kimi-Audio-7B-Instruct",
   "bias": "none",
   "corda_config": null,
   "ensure_weight_tying": false,

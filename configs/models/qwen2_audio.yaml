@@ -5,14 +5,18 @@ extraction:
   llm:
     method: "output_hidden_states"
     selected_layers: [0, 1, 8, 16, 24, -1]
-    pooling_strategies: ["mean", "last"] #, "audio_mean", "text_mean"]
+    pooling_strategies: ["mean", "last"]
+  # Audio tower + multi-modal projector, extracted together in one forward
+  # pass. `selected_layers` names what is emitted rather than indexing the
+  # encoder: the audio tower's last hidden state, and that state after the
+  # projector. Matches the "whisper"/"projector" keys the other two models use.
   whisper:
-    method: "output_hidden_states"
-    selected_layers: [-1]
+    method: "modules"
+    selected_layers: ["whisper", "projector"]
     pooling_strategies: ["mean", "last"]
 
 training:
-  trainable_components: ["llm", "whisper"]  # LoRA applied to all-linear covers both
+  # LoRA on all-linear covers both the LLM and the Whisper encoder.
   lora:
     r: 4
     alpha: 32

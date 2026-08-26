@@ -58,11 +58,11 @@ class DatasetConfig:
 # ---------------------------------------------------------------------------
 
 CREMAD_ANNOTATED = DatasetConfig(
-    csv_path="data/cremad_all_clean_w_sad_filtered.csv",
+    csv_path="data/CREMA-ASIS_meta.csv",
     acoustic_column="acoustic",
     semantic_column="semantic",
     filepath_column=None,
-    wav_dir="data/cremad-sync/cremad-sync-wsad/",
+    wav_dir="data/crema-asis/cremad-sync-wsad/",
     wav_column="output_name",
 )
 
@@ -92,47 +92,6 @@ MELD_VAL = DatasetConfig(
     wav_dir="data/MELD.Raw/dev_wav",
     wav_column="wavname",
 )
-
-"""
-# Ran locally
-CREMAD_ANNOTATED = DatasetConfig(
-    csv_path="../emotional_tts/cremad_all_clean_w_sad_filtered.csv",
-    acoustic_column="acoustic",
-    semantic_column="semantic",
-    filepath_column=None,
-    wav_dir="../emotional_tts/cremad-sync/cremad-sync-wsad/",
-    wav_column="output_name",
-)
-
-CREMAD_BASE = DatasetConfig(
-    csv_path="../emotional_tts/crema-d_en_split.csv",
-    acoustic_column="emotion",
-    semantic_column=None,  # defaults to "neutral"
-    filepath_column=None,
-    wav_dir="../emotional_tts/AudioWAV_en/",
-    wav_column="wavname",
-)
-
-MELD_TRAIN = DatasetConfig(
-    csv_path="../emotional_tts/MELD/MELD.Raw/train_sent_emo_with_paths.csv",
-    acoustic_column="Emotion",
-    semantic_column="Sentiment",
-    split='train',
-    filepath_column=None,
-    wav_dir="../emotional_tts/MELD/MELD.Raw",
-    wav_column="Audio_Path",
-)
-
-MELD_VAL = DatasetConfig(
-    csv_path="../emotional_tts/MELD/MELD.Raw/val_sent_emo_with_paths.csv",
-    acoustic_column="Emotion",
-    semantic_column="Sentiment",
-    split='val',
-    filepath_column=None,
-    wav_dir="../emotional_tts/MELD/MELD.Raw",
-    wav_column="Audio_Path",
-)
-"""
 
 # ---------------------------------------------------------------------------
 # Loading helpers

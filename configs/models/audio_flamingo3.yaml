@@ -6,18 +6,14 @@ extraction:
     method: "hooks"
     selected_layers: [0, 1, 6, 13, 20, 27]
     pooling_strategies: ["mean", "last"]
-    extra_hooks:
-      - name: "whisper"
-        target: "audio_tower"
-      - name: "projector"
-        target: "multi_modal_projector"
+    # In addition to the LLM layers above, the extractor hooks the audio
+    # tower's last encoder layer and the multi-modal projector. Targets are
+    # defined in AudioFlamingoEmbeddingExtractor._register_hooks.
 
 training:
-  trainable_components: ["llm", "whisper"]  # Both trained
-  audio_padding:
-    max_samples: 480000  # 30s at 16kHz
-    sampling_rate: 16000
-    max_feature_len: 750
+  # LoRA on all-linear covers both the LLM and the Whisper encoder.
+  # Audio is padded to a fixed 30 s window; see
+  # AudioFlamingoAudioDataCollator.MAX_AUDIO_SAMPLES / MAX_FEATURE_LEN.
   lora:
     r: 4
     alpha: 32

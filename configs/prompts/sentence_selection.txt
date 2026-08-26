@@ -1,0 +1,12 @@
+Input: a single sentence.
+Task: Return only two things, separated by a period:
+
+a. True or False — depending on whether any of the following conditions are met
+(1) The sentence does not express a {sentiment} sentiment.
+(2) The sentence contains content that is strongly racist, very offensive, or inappropriate for public use.
+(3) The sentence includes words or expressions that people typically would not say aloud (i.e., phrases that exist only in written form).
+b. If True, also return the reason number (1, 2, or 3) that applies.
+If True, list all applicable reasons as comma-separated numbers after the period.
+If False, just return False.
+
+Input: {sentence}

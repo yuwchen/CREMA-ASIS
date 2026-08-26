@@ -5,8 +5,9 @@ for ``Qwen/Qwen2-Audio-7B-Instruct``.
 
 Extraction approach:
 - **LLM**: Uses ``output_hidden_states=True`` on the full model forward pass.
-- **Whisper**: Extracts ``model.audio_tower`` and calls it separately with
-  ``output_hidden_states=True``.
+- **Whisper / projector**: Runs ``model.audio_tower`` separately and pushes its
+  last hidden state through ``model.multi_modal_projector``, giving the same
+  ``whisper`` / ``projector`` representations the other two models emit.
 """
 
 from __future__ import annotations
@@ -143,8 +144,7 @@ class Qwen2AudioModel(AudioModel):
         """Extract LLM hidden-state embeddings using ``output_hidden_states``.
 
         Returns:
-            Dict ``{layer_idx: {"mean": tensor, "last": tensor,
-            "audio_mean": tensor, "text_mean": tensor}}``.
+            Dict ``{layer_idx: {"mean": tensor, "last": tensor}}``.
         """
         sr = self.processor.feature_extractor.sampling_rate
         conversation = [
@@ -176,11 +176,6 @@ class Qwen2AudioModel(AudioModel):
             resolved_layers = [
                 idx if idx >= 0 else total_layers + idx for idx in selected_layers
             ]
-            """
-            audio_start, audio_end = self.get_audio_token_range(
-                inputs, all_hidden_states[-1]
-            )
-            """
 
             file_embeddings = {}
             for layer_idx in resolved_layers:
@@ -192,37 +187,51 @@ class Qwen2AudioModel(AudioModel):
                     "last": torch.from_numpy(hs[-1]),
                     "mean": torch.from_numpy(hs.mean(axis=0)),
                 }
-                """
-                if audio_start is not None and audio_end is not None:
-                    audio_emb = hs[audio_start:audio_end, :]
-                    pooled["audio_mean"] = torch.from_numpy(audio_emb.mean(axis=0))
-                    text_emb = np.concatenate(
-                        [hs[:audio_start, :], hs[audio_end:, :]], axis=0
-                    )
-                    pooled["text_mean"] = torch.from_numpy(
-                        text_emb.mean(axis=0) if text_emb.shape[0] > 0 else hs.mean(axis=0)
-                    )
-                else:
-                    pooled["audio_mean"] = pooled["mean"]
-                    pooled["text_mean"] = pooled["mean"]
-                """
                 file_embeddings[layer_idx] = pooled
-                
+
         return file_embeddings
 
-    def extract_whisper_embeddings(
+    def _get_audio_modules(self):
+        """Return ``(audio_tower, multi_modal_projector)``, unwrapping PEFT."""
+        model = self.model
+        if hasattr(model, "base_model"):
+            base = model.base_model
+            if not hasattr(base, "audio_tower"):
+                base = base.model
+        else:
+            base = model
+        return base.audio_tower, base.multi_modal_projector
+
+    def extract_encoder_embeddings(
         self,
         audio_path: str,
-        selected_layers: list[int],
-        prompt: str,
+        selected_layers: list = None,
+        prompt: str = "",
         role_prompt: str = "You are a helpful assistant.",
         use_float16: bool = True,
         device: str = "cuda:0",
     ) -> dict:
-        """Extract Whisper encoder hidden states.
+        """Extract Whisper encoder and multi-modal projector representations.
+
+        The audio tower is run once; its last hidden state is the ``whisper``
+        representation and is then pushed through ``multi_modal_projector`` to
+        give the ``projector`` representation (1280-dim -> 4096-dim).  This
+        mirrors what the Kimi-Audio and Audio-Flamingo3 extractors emit, so
+        probing results are directly comparable across the three models.
+
+        Args:
+            audio_path: Path to a WAV file.
+            selected_layers: Unused; the layer selection for this component is
+                fixed to the last encoder layer.  Accepted so the call
+                signature matches the other extractors.
+            prompt: Task prompt text.
+            role_prompt: System prompt.
+            use_float16: Store embeddings as FP16.
+            device: Torch device string.
 
         Returns:
-            Dict ``{layer_str: {"mean": ndarray, "last": ndarray}}``.
+            Dict ``{"whisper": {"mean": tensor, "last": tensor},
+            "projector": {"mean": tensor, "last": tensor}}``.
         """
         sr = self.processor.feature_extractor.sampling_rate
         conversation = [
@@ -245,27 +254,33 @@ class Qwen2AudioModel(AudioModel):
         )
         inputs = {k: v.to(device) if torch.is_tensor(v) else v for k, v in inputs.items()}
 
-        if hasattr(self.model, 'base_model'):
-            base = self.model.base_model
-            audio_encoder = base.audio_tower if hasattr(base, 'audio_tower') else base.model.audio_tower
-        else:
-            audio_encoder = self.model.audio_tower
+        audio_encoder, projector = self._get_audio_modules()
         audio_encoder.eval()
+        projector.eval()
 
         with torch.no_grad():
-            encoder_outputs = audio_encoder(
-                inputs["input_features"], output_hidden_states=True
-            )
-            hidden_states = encoder_outputs.hidden_states
+            encoder_outputs = audio_encoder(inputs["input_features"])
+            if hasattr(encoder_outputs, "last_hidden_state"):
+                encoder_hidden = encoder_outputs.last_hidden_state
+            elif isinstance(encoder_outputs, tuple):
+                encoder_hidden = encoder_outputs[0]
+            else:
+                encoder_hidden = encoder_outputs
+
+            # projector: (batch, seq, 1280) -> (batch, seq, 4096)
+            projected = projector(encoder_hidden)
 
             file_embeddings = {}
-            for layer_idx in selected_layers:
-                hs = hidden_states[layer_idx][0].cpu().numpy()
+            for name, states in (("whisper", encoder_hidden), ("projector", projected)):
+                hs = states[0].float().cpu().numpy()
                 if use_float16:
                     hs = hs.astype(np.float16)
-                file_embeddings[str(layer_idx)] = {
-                    "last": hs[-1],
-                    "mean": hs.mean(axis=0),
+                file_embeddings[name] = {
+                    "last": torch.from_numpy(hs[-1]),
+                    "mean": torch.from_numpy(hs.mean(axis=0)),
                 }
 
         return file_embeddings
+
+    # Backwards-compatible alias for the pre-projector entry point.
+    extract_whisper_embeddings = extract_encoder_embeddings
