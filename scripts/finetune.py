@@ -7,14 +7,14 @@ Usage:
         --model-config configs/models/qwen2_audio.yaml \
         --train-config configs/training/default.yaml \
         --output-dir finetuned_models/qwen2-audio-lora \
-        --datasets cremad_annotated cremad_base meld
+        --datasets crema_asis crema_d meld
 
     python scripts/finetune.py \
         --model audio-flamingo3 \
         --model-config configs/models/audio_flamingo3.yaml \
         --train-config configs/training/default.yaml \
         --output-dir finetuned_models/audio-flamingo3-lora \
-        --datasets cremad_annotated cremad_base meld
+        --datasets crema_asis crema_d meld
 
     # NOTE: kimi-audio requires deepspeed to run multi-gpu fine-tuning
     deepspeed --num_gpus=2 scripts/finetune.py \
@@ -22,7 +22,7 @@ Usage:
         --model-config configs/models/kimi_audio.yaml \
         --train-config configs/training/training_kimi_audio.yaml \
         --output-dir finetuned_models/kimi-audio-lora \
-        --datasets cremad_annotated cremad_base meld
+        --datasets crema_asis crema_d meld
 """
 import sys
 import os
@@ -32,8 +32,8 @@ import argparse
 import random
 
 from src.data.datasets import (
-    CREMAD_ANNOTATED,
-    CREMAD_BASE,
+    CREMA_ASIS,
+    CREMA_D,
     MELD_TRAIN,
     MELD_VAL,
     DatasetConfig,
@@ -44,9 +44,11 @@ from src.utils.seed import set_seed
 
 
 # Shorthand names → DatasetConfig lists
+#   crema_asis : the synthesized, annotated dataset (this repo)
+#   crema_d    : the original CREMA-D corpus
 DATASET_PRESETS = {
-    "cremad_annotated": [CREMAD_ANNOTATED],
-    "cremad_base": [CREMAD_BASE],
+    "crema_asis": [CREMA_ASIS],
+    "crema_d": [CREMA_D],
     "meld": [MELD_TRAIN, MELD_VAL],
 }
 
@@ -61,7 +63,7 @@ def main():
     parser.add_argument("--train-config", required=True, help="Training YAML config")
     parser.add_argument("--output-dir", required=True, help="Output directory")
     parser.add_argument(
-        "--datasets", nargs="+", default=["cremad_annotated", "cremad_base", "meld"],
+        "--datasets", nargs="+", default=["crema_asis", "crema_d", "meld"],
         help="Dataset presets to combine",
     )
     parser.add_argument("--prompt", default="configs/prompts/emotion_sentiment.txt")

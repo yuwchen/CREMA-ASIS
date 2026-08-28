@@ -57,7 +57,8 @@ class DatasetConfig:
 # Pre-defined configs for known datasets
 # ---------------------------------------------------------------------------
 
-CREMAD_ANNOTATED = DatasetConfig(
+# CREMA-ASIS: the synthesized, acoustic/semantic-annotated dataset (this repo).
+CREMA_ASIS = DatasetConfig(
     csv_path="data/CREMA-ASIS_meta.csv",
     acoustic_column="acoustic",
     semantic_column="semantic",
@@ -66,7 +67,8 @@ CREMAD_ANNOTATED = DatasetConfig(
     wav_column="output_name",
 )
 
-CREMAD_BASE = DatasetConfig(
+# CREMA-D: the original corpus (acoustic emotion only; semantic defaults to neutral).
+CREMA_D = DatasetConfig(
     csv_path="data/crema-d_en_split.csv",
     acoustic_column="emotion",
     semantic_column=None,  # defaults to "neutral"

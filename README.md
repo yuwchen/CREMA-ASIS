@@ -97,29 +97,20 @@ The pipeline expects data under a `data/` directory in the project root. The key
 
 ```
 data/
-├── crema-asis/
-│   └── cremad-sync-wsad/     # CREMA-ASIS generated audio (WAV)
+├── CREMA-ASIS/               # CREMA-ASIS generated audio (WAV)       
 ├── CREMA-D/
-│   └── AudioWAV_en/          # original CREMA-D audio (TTS speaker references)
+│   └── AudioWAV/             # original CREMA-D audio (TTS speaker references)
 ├── CREMA-ASIS_meta.csv       # full CREMA-ASIS manifest, all splits
 ├── CREMA-ASIS_test.csv       # test split, WER-filtered (evaluation)
 ├── CREMA-ASIS_sentences.csv  # unique sentences + GPT-4o filter rationale
 └── crema-d_en_split.csv      # original CREMA-D split (fine-tuning)
 ```
 
-`CREMA-ASIS_meta.csv` is the single source of truth: one row per generated
-utterance, with the reference clip, the actor, the acoustic emotion and
-semantic sentiment labels, the split, the AER prediction that let the sample
-through filtering, and the Whisper transcript with its WER.
-`CREMA-ASIS_test.csv` is the evaluation set: the `split == "test"` rows of that
-file with `wer < 0.5` already applied, 5,879 of 6,171. Evaluate against it
-directly — no further filtering is needed.
+`CREMA-ASIS_meta.csv` is the single source of truth: one row per generated utterance, with the reference clip, the actor, the acoustic emotion and semantic sentiment labels, the split, the AER prediction that let the sample through filtering, and the Whisper transcript with its WER.
 
-The manifest keeps every row, including the high-WER ones, so the full dataset
-counts stay reproducible. `scripts/evaluate.py` applies the same `wer < 0.5` cut
-by default, which is a no-op on the pre-filtered test file but does the right
-thing if you point it at the manifest instead. Pass `--no-wer-filter` to disable
-it.
+`CREMA-ASIS_test.csv` is the test set: the `split == "test"` rows of that file with `wer < 0.5` already applied, 5,879 of 6,171. Evaluate against it directly — no further filtering is needed.
+
+The manifest keeps every row, including the high-WER ones, so the full dataset counts stay reproducible. `scripts/evaluate.py` applies the same `wer < 0.5` cut by default, which is a no-op on the pre-filtered test file but does the right thing if you point it at the manifest instead. Pass `--no-wer-filter` to disable it.
 
 If you also want to fine-tune on MELD, place it at `data/MELD.Raw/` following the expected directory layout (`meld_train.csv`, `meld_val.csv`, `train_wav/`, `dev_wav/`).
 
@@ -141,10 +132,7 @@ The pipeline runs in roughly this order:
 
 ### 0. Sentence selection
 
-Sentences come from GoEmotions and are screened with GPT-4o before use: a
-sentence is dropped if it does not carry the target sentiment, is offensive, or
-only exists in written form. The prompt is in
-`configs/prompts/sentence_selection.txt`.
+Sentences come from GoEmotions and are screened with GPT-4o before use: a sentence is dropped if it does not carry the target sentiment, is offensive, or only exists in written form. The prompt is in `configs/prompts/sentence_selection.txt`.
 
 Needs an OpenAI API key:
 ```bash
@@ -157,29 +145,26 @@ python scripts/filter_sentences.py \
     --output data/goemotions_filtered.csv
 ```
 
-The sentences that survived this stage, with the model's stated reason, are
-released in `data/CREMA-ASIS_sentences.csv`.
+The sentences that survived this stage, with the model's stated reason, are released in `data/CREMA-ASIS_sentences.csv`.
 
 ---
 
 ### 1. Data generation
 
-The CREMA-ASIS dataset is built using IndexTTS2 TTS with voice cloning. The idea is to generate speech where we independently control the acoustic emotion (via a CREMA-D reference clip that carries the target emotion) and the semantic content (via a sentence from GoEmotions). This lets us create utterances where the two are incongruous — e.g., an angry-sounding voice saying something positive — at a scale that can't be obtained from natural data. After generation, an acoustic emotion recognition (AER) model is used to filter out samples where the intended emotion clearly wasn't conveyed (see step 2).
+The CREMA-ASIS dataset is built using IndexTTS2 TTS with voice cloning. The idea is to generate speech where we independently control the acoustic emotion (via a CREMA-D reference clip that carries the target emotion) and the semantic content (via a sentence from GoEmotions). This lets us create utterances where the two are incongruous — e.g., an angry-sounding voice saying something positive — at a scale that is hard obtain from natural data. After generation, an acoustic emotion recognition (AER) model is used to filter out samples where the intended emotion clearly wasn't conveyed (see step 2).
 
 For a single sample:
 ```bash
 python scripts/generate_data.py \
     --cfg checkpoints/config.yaml \
     --model-dir checkpoints \
-    --speaker data/CREMA-D/AudioWAV_en/1001_DFA_ANG_XX.wav \
+    --speaker data/CREMA-D/AudioWAV/1001_DFA_ANG_XX.wav \
     --text "I appreciate it, that's good to know." \
-    --output data/samples/output.wav \
+    --output data/CREMA-ASIS/output.wav \
     --emotion 0 0 0 0 0 0 0 0
 ```
 
-The `--speaker` clip is the **original CREMA-D** recording that carries the
-target acoustic emotion; the emotion vector stays all-zero so the tone comes
-from the reference voice alone.
+The `--speaker` clip is the **original CREMA-D** recording that carries the target acoustic emotion; the emotion vector stays all-zero so the tone comes from the reference voice alone.
 
 For batch generation from a CSV manifest (recommended):
 
@@ -189,9 +174,9 @@ The CSV should have columns: `audio_path`, `output_text`, `emo_vector` (8-dim li
 python scripts/generate_data_from_csv.py \
     --cfg checkpoints/config.yaml \
     --model-dir checkpoints \
-    --speaker-dir data/CREMA-D/AudioWAV_en \
+    --speaker-dir data/CREMA-D/AudioWAV \
     --csv data/CREMA-ASIS_meta.csv \
-    --output-dir data/crema-asis/cremad-sync-wsad \
+    --output-dir data/CREMA_ASIS \
     --skip-existing
 ```
 
@@ -203,18 +188,14 @@ After generation, run an acoustic emotion recognition (AER) model over the outpu
 
 ```bash
 python scripts/filter_data.py \
-    --wav-dir data/crema-asis/cremad-sync-wsad \
+    --wav-dir data/CREMA_ASIS \
     --output-csv data/acoustic_detection.csv \
     --kept-csv data/acoustic_detection_kept.csv
 ```
 
-This writes the AER prediction for every file, plus the intended emotion
-(parsed from the filename) and a `keep` flag.
+This writes the AER prediction for every file, plus the intended emotion (parsed from the filename) and a `keep` flag.
 
-The AER is imperfect, so a sample is kept when its prediction is either the
-target emotion or a perceptually adjacent one; only clear mismatches are
-dropped. The accepted pairs are in `RETENTION_POLICY` in
-`src/data/filtering.py`:
+The AER is imperfect, so a sample is kept when its prediction is either the target emotion or a perceptually adjacent one; only clear mismatches are dropped. The accepted pairs are in `RETENTION_POLICY` in `src/data/filtering.py`:
 
 | Target | Accepted AER predictions |
 | --- | --- |
@@ -228,19 +209,16 @@ Pass `--no-policy` to write raw predictions without applying the rule.
 
 #### Transcription check
 
-The generated speech is also transcribed with `whisper-base.en` and compared
-against the sentence that was requested, which is where the `wer` column in the
-manifest comes from:
+The generated speech is also transcribed with `whisper-base.en` and compared against the sentence that was requested, which is where the `wer` column in the manifest comes from:
 
 ```bash
 python scripts/compute_wer.py \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA_ASIS \
     --output data/CREMA-ASIS_meta_wer.csv
 ```
 
-The same script scores a LALM's own transcripts with `--score-only`, which is
-how the transcription results in the paper were produced.
+The same script scores a LALM's own transcripts with `--score-only`, which is how the transcription results in the paper were produced.
 
 ---
 
@@ -255,7 +233,7 @@ python scripts/finetune.py \
     --model-config configs/models/qwen2_audio.yaml \
     --train-config configs/training/default.yaml \
     --output-dir finetuned_models/qwen2-audio-lora \
-    --datasets cremad_annotated cremad_base meld
+    --datasets crema_asis crema_d meld
 ```
 
 **Audio-Flamingo3**
@@ -265,7 +243,7 @@ python scripts/finetune.py \
     --model-config configs/models/audio_flamingo3.yaml \
     --train-config configs/training/default.yaml \
     --output-dir finetuned_models/audio-flamingo3-lora \
-    --datasets cremad_annotated cremad_base meld
+    --datasets crema_asis crema_d meld
 ```
 
 **Kimi-Audio**
@@ -277,7 +255,7 @@ deepspeed --num_gpus=1 scripts/finetune.py \
     --model-config configs/models/kimi_audio.yaml \
     --train-config configs/training/training_kimi_audio.yaml \
     --output-dir finetuned_models/kimi-audio-lora \
-    --datasets cremad_annotated cremad_base meld
+    --datasets crema_asis crema_d meld
 ```
 
 ---
