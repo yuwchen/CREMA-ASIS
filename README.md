@@ -1,6 +1,13 @@
 # CREMA-ASIS
 
-Code for the study *When Vocal Tone and Literal Meaning Diverge: An Acoustic–Semantic Incongruity Study for Large Audio–Language Models*.
+This repository contains the code for our paper:
+
+***When Vocal Tone and Literal Meaning Diverge: An Acoustic–Semantic Incongruity Study for Large Audio–Language Models***
+
+Accepted to the Findings of EMNLP 2026.
+
+
+<br>
 
 The project investigates whether large audio-language models (LALMs) can detect incongruity between a speaker's emotional tone and the literal meaning of what they say.
 
@@ -598,3 +605,4 @@ To facilitate reproducibility, we provide our fine-tuned LoRA weights under `wei
 * **TODO**: Unify qwen2-audio LLM-layer extraction with Audio-Flamingo3 and Kimi-Audio by using forward hooks instead of relying on output embeddings from transformers. Reduces the forward pass of the audio encoder by half. (The Whisper/projector path already runs the audio tower once and reuses its output.)
 
 
+## Citation
