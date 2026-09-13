@@ -1,10 +1,14 @@
-# CREMA-ASIS
+<div align="center">
 
+# CREMA-ASIS
+<a href='https://arxiv.org/abs/2608.28966'>
+<img src='https://img.shields.io/badge/Paper-Arxiv-purple'></a>
+</div>
 This repository contains the code for our paper:
 
 ***When Vocal Tone and Literal Meaning Diverge: An Acoustic–Semantic Incongruity Study for Large Audio–Language Models***
 
-Accepted to the Findings of EMNLP 2026.
+Accepted to the Findings of EMNLP 2026 🎊.
 
 
 <br>
@@ -606,3 +610,13 @@ To facilitate reproducibility, we provide our fine-tuned LoRA weights under `wei
 
 
 ## Citation
+
+If you find our paper helpful, please consider citing our papers and starring us！
+```bibtex
+@article{chen2026vocal,
+  title={When Vocal Tone and Literal Meaning Diverge: An Acoustic-Semantic Incongruity Study for Large Audio-Language Models},
+  author={Chen, Yu-Wen and Ho, William and Topaz, Maxim and Kostic, Zoran and Hirschberg, Julia},
+  journal={arXiv preprint arXiv:2608.28966},
+  year={2026}
+}
+```
