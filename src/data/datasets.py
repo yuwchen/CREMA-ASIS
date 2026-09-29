@@ -63,7 +63,7 @@ CREMA_ASIS = DatasetConfig(
     acoustic_column="acoustic",
     semantic_column="semantic",
     filepath_column=None,
-    wav_dir="data/crema-asis/cremad-sync-wsad/",
+    wav_dir="data/CREMA-ASIS/",
     wav_column="output_name",
 )
 
@@ -73,7 +73,7 @@ CREMA_D = DatasetConfig(
     acoustic_column="emotion",
     semantic_column=None,  # defaults to "neutral"
     filepath_column=None,
-    wav_dir="data/CREMA-D/AudioWAV_en/",
+    wav_dir="data/CREMA-D/AudioWAV/",
     wav_column="wavname",
 )
 

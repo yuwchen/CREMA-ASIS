@@ -7,7 +7,7 @@ Usage:
         --model-config configs/models/qwen2_audio.yaml \
         --probe-config configs/probing/default.yaml \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad/ \
+        --data-dir data/CREMA-ASIS/ \
         --cache-dir embedding_cache \
         --results-dir probe_results
 
@@ -16,7 +16,7 @@ Usage:
         --model-config configs/models/kimi_audio.yaml \
         --probe-config configs/probing/default.yaml \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad/ \
+        --data-dir data/CREMA-ASIS/ \
         --cache-dir embedding_cache \
         --results-dir probe_results \
         --lora-path finetuned_models/kimi-audio-lora/checkpoint
@@ -50,7 +50,7 @@ def main():
     parser.add_argument("--cache-dir", default="embedding_cache")
     parser.add_argument("--results-dir", default="probe_results")
     parser.add_argument("--lora-path", default=None)
-    parser.add_argument("--sample-pct", type=int, default=100)
+    parser.add_argument("--sample-pct", type=float, default=100)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--not-float16", action="store_true")
     parser.add_argument(

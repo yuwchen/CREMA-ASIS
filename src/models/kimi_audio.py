@@ -87,7 +87,7 @@ class KimiAudioModel(AudioModel):
         local_rank = int(os.environ.get("LOCAL_RANK", 0))
         torch.cuda.set_device(local_rank)
 
-        self.model = KimiAudio(model_path=self.model_name, load_detokenizer=True)
+        self.model = KimiAudio(model_path=self.model_name, load_detokenizer=False)
 
         if lora_path:
             print(f"Loading LoRA weights from: {lora_path}")

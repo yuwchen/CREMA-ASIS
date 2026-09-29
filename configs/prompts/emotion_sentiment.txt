@@ -7,6 +7,6 @@ Definitions:
 Respond strictly in the following JSON format (no explanations, no extra text):
 
 {
-  "acoustic_emotion": "<emotion inferred solely from acoustic cues: happy | sad | angry | fear | disgust | surprise | neutral | calm >",
-  "semantic_sentiment": "<sentiment inferred solely from semantic cues: positive | negative | neutral >"
+"acoustic_emotion": "<emotion inferred solely from acoustic cues: happy | sad | angry | fear | disgust | surprise | neutral | calm >",
+"semantic_sentiment": "<sentiment inferred solely from semantic cues: positive | negative | neutral >"
 }

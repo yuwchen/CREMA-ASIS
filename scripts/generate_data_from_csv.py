@@ -14,7 +14,7 @@ Usage:
     python scripts/generate_data_from_csv.py \
         --cfg checkpoints/config.yaml \
         --model-dir checkpoints \
-        --speaker-dir ./CREMA-D/AudioWAV_en \
+        --speaker-dir ./CREMA-D/AudioWAV \
         --csv data/CREMA-ASIS_meta.csv \
         --output-dir ./samples \
         [--skip-existing] [--fp16]

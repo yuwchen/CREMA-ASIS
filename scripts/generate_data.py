@@ -5,7 +5,7 @@ Usage:
     python scripts/generate_data.py \
         --cfg checkpoints/config.yaml \
         --model-dir checkpoints \
-        --speaker ./CREMA-D/AudioWAV_en/1001_DFA_ANG_XX.wav \
+        --speaker ./CREMA-D/AudioWAV/1001_DFA_ANG_XX.wav \
         --text "I appreciate it, that's good to know." \
         --output ./samples/output.wav \
         --emotion 0 0 0 0 0 0 0 0

@@ -231,7 +231,13 @@ def extract_and_cache_all(
     count = 0
     for audio_path in tqdm(files_todo, desc="Extracting"):
         try:
-            embeddings[audio_path] = extract_fn(audio_path)
+            # Clone so each pooled vector owns its storage: a view (e.g. x[-1])
+            # would otherwise pickle the full hidden-state buffer behind it.
+            embeddings[audio_path] = {
+                layer: {pool: t.clone() for pool, t in pooled.items()}
+                for layer, pooled in extract_fn(audio_path).items()
+            }
+
             count += 1
 
             if count % 10 == 0:

@@ -10,7 +10,7 @@ Usage (base model):
         --model qwen2-audio \
         --model-config configs/models/qwen2_audio.yaml \
         --data data/CREMA-ASIS_test.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad \
+        --data-dir data/CREMA-ASIS \
         --output results/qwen2_base.csv
 
 Usage (fine-tuned with LoRA):
@@ -19,7 +19,7 @@ Usage (fine-tuned with LoRA):
         --model-config configs/models/qwen2_audio.yaml \
         --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
         --data data/CREMA-ASIS_test.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad \
+        --data-dir data/CREMA-ASIS \
         --output results/qwen2_lora.csv
 
 Usage (parquet dataset like LISTEN):

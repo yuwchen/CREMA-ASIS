@@ -59,6 +59,8 @@ def clean_response(response: str) -> str:
         response = response.split("<")[0]
     if "{" not in response and "}" in response:
         response = response.split("}")[0].strip()
+    if "{" in response and "}" not in response:
+          response = response.rstrip().rstrip(",") + "}"
     return response
 
 

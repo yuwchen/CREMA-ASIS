@@ -72,7 +72,7 @@ pip install transformers==4.46.1
 
 **Audio-Flamingo3**
 ```bash
-pip install --upgrade "git+https://github.com/huggingface/transformers" accelerate
+pip install transformers==5.6.0
 ```
 
 **Kimi-Audio**
@@ -176,7 +176,7 @@ python scripts/generate_data_from_csv.py \
     --model-dir checkpoints \
     --speaker-dir data/CREMA-D/AudioWAV \
     --csv data/CREMA-ASIS_meta.csv \
-    --output-dir data/CREMA_ASIS \
+    --output-dir data/CREMA-ASIS \
     --skip-existing
 ```
 
@@ -188,7 +188,7 @@ After generation, run an acoustic emotion recognition (AER) model over the outpu
 
 ```bash
 python scripts/filter_data.py \
-    --wav-dir data/CREMA_ASIS \
+    --wav-dir data/CREMA-ASIS \
     --output-csv data/acoustic_detection.csv \
     --kept-csv data/acoustic_detection_kept.csv
 ```
@@ -214,7 +214,7 @@ The generated speech is also transcribed with `whisper-base.en` and compared aga
 ```bash
 python scripts/compute_wer.py \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/CREMA_ASIS \
+    --data-dir data/CREMA-ASIS \
     --output data/CREMA-ASIS_meta_wer.csv
 ```
 
@@ -275,7 +275,7 @@ python scripts/evaluate.py \
     --model qwen2-audio \
     --model-config configs/models/qwen2_audio.yaml \
     --data data/CREMA-ASIS_test.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --output results/qwen2_base.csv
 ```
 
@@ -286,7 +286,7 @@ python scripts/evaluate.py \
     --model-config configs/models/qwen2_audio.yaml \
     --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
     --data data/CREMA-ASIS_test.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --output results/qwen2_lora.csv
 ```
 
@@ -296,8 +296,19 @@ python scripts/evaluate.py \
     --model audio-flamingo3 \
     --model-config configs/models/audio_flamingo3.yaml \
     --data data/CREMA-ASIS_test.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --output results/audio_flamingo3_base.csv
+```
+
+**Audio-Flamingo3 (fine-tuned)**
+```bash
+python scripts/evaluate.py \
+    --model audio-flamingo3 \
+    --model-config configs/models/audio_flamingo3.yaml \
+    --lora-path finetuned_models/audio-flamingo3-lora/checkpoint \
+    --data data/CREMA-ASIS_test.csv \
+    --data-dir data/CREMA-ASIS \
+    --output results/audio_flamingo3_lora.csv
 ```
 
 **Kimi-Audio (base)**
@@ -306,8 +317,19 @@ python scripts/evaluate.py \
     --model kimi-audio \
     --model-config configs/models/kimi_audio.yaml \
     --data data/CREMA-ASIS_test.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --output results/kimi_audio_base.csv
+```
+
+**Kimi-Audio (fine-tuned)**
+```bash
+python scripts/evaluate.py \
+    --model kimi-audio \
+    --model-config configs/models/kimi_audio.yaml \
+    --lora-path finetuned_models/kimi-audio-lora/checkpoint \
+    --data data/CREMA-ASIS_test.csv \
+    --data-dir data/CREMA-ASIS \
+    --output results/kimi_audio_lora.csv
 ```
 
 ---
@@ -397,12 +419,6 @@ python scripts/evaluate.py \
     --data-format parquet \
     --temp-audio-dir LISTEN_audios \
     --output results/qwen2_lora_listen_acoustic.csv
-
-python scripts/compute_metrics.py \
-    --predictions results/qwen2_lora_listen_acoustic.csv \
-    --single-task --true-column acoustic --pred-column acoustic_emotion \
-    --label-map configs/data/listen_label_map.yaml \
-    --label-map-key acoustic_synonyms
 ```
 
 Samples the model failed to process keep an empty prediction and are counted as
@@ -420,7 +436,7 @@ python scripts/extract_embeddings.py \
     --model qwen2-audio --component llm \
     --model-config configs/models/qwen2_audio.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 **Qwen2-Audio — Whisper encoder + multi-modal projector**
@@ -429,7 +445,7 @@ python scripts/extract_embeddings.py \
     --model qwen2-audio --component whisper \
     --model-config configs/models/qwen2_audio.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 **Qwen2-Audio — fine-tuned LLM**
@@ -439,7 +455,7 @@ python scripts/extract_embeddings.py \
     --model-config configs/models/qwen2_audio.yaml \
     --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 **Audio-Flamingo3 — base**
@@ -448,7 +464,7 @@ python scripts/extract_embeddings.py \
     --model audio-flamingo3 --component llm \
     --model-config configs/models/audio_flamingo3.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 **Audio-Flamingo3 — fine-tuned**
@@ -458,7 +474,7 @@ python scripts/extract_embeddings.py \
     --model-config configs/models/audio_flamingo3.yaml \
     --lora-path finetuned_models/audio-flamingo3-lora/checkpoint \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 **Kimi-Audio — base**
@@ -467,7 +483,7 @@ python scripts/extract_embeddings.py \
     --model kimi-audio --component llm \
     --model-config configs/models/kimi_audio.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 **Kimi-Audio — fine-tuned**
@@ -477,7 +493,7 @@ python scripts/extract_embeddings.py \
     --model-config configs/models/kimi_audio.yaml \
     --lora-path finetuned_models/kimi-audio-lora/checkpoint \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad
+    --data-dir data/CREMA-ASIS
 ```
 
 ---
@@ -493,7 +509,7 @@ python scripts/run_probing.py \
     --model-config configs/models/qwen2_audio.yaml \
     --probe-config configs/probing/default.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```
@@ -505,7 +521,7 @@ python scripts/run_probing.py \
     --model-config configs/models/qwen2_audio.yaml \
     --probe-config configs/probing/default.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```
@@ -518,7 +534,7 @@ python scripts/run_probing.py \
     --probe-config configs/probing/default.yaml \
     --lora-path finetuned_models/qwen2-audio-lora/checkpoint \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```
@@ -530,7 +546,7 @@ python scripts/run_probing.py \
     --model-config configs/models/audio_flamingo3.yaml \
     --probe-config configs/probing/default.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```
@@ -543,7 +559,7 @@ python scripts/run_probing.py \
     --probe-config configs/probing/default.yaml \
     --lora-path finetuned_models/audio-flamingo3-lora/checkpoint \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```
@@ -555,7 +571,7 @@ python scripts/run_probing.py \
     --model-config configs/models/kimi_audio.yaml \
     --probe-config configs/probing/default.yaml \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```
@@ -568,7 +584,7 @@ python scripts/run_probing.py \
     --probe-config configs/probing/default.yaml \
     --lora-path finetuned_models/kimi-audio-lora/checkpoint \
     --csv data/CREMA-ASIS_meta.csv \
-    --data-dir data/crema-asis/cremad-sync-wsad \
+    --data-dir data/CREMA-ASIS \
     --cache-dir embedding_cache \
     --results-dir probe_results
 ```

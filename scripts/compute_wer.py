@@ -12,7 +12,7 @@ Two uses:
 Usage (transcribe generated audio and add a wer column):
     python scripts/compute_wer.py \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad \
+        --data-dir data/CREMA-ASIS \
         --output data/CREMA-ASIS_meta_wer.csv
 
 Usage (score transcripts that are already in a CSV):

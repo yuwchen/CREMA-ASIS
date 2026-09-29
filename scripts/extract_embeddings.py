@@ -8,21 +8,21 @@ Usage (Qwen2-Audio LLM layers):
         --model qwen2-audio --component llm \
         --model-config configs/models/qwen2_audio.yaml \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad/
+        --data-dir data/CREMA-ASIS/
 
 Usage (Qwen2-Audio Whisper encoder):
     python scripts/extract_embeddings.py \
         --model qwen2-audio --component whisper \
         --model-config configs/models/qwen2_audio.yaml \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad/
+        --data-dir data/CREMA-ASIS/
 
 Usage (Kimi-Audio with LoRA):
     python scripts/extract_embeddings.py \
         --model kimi-audio --component llm \
         --model-config configs/models/kimi_audio.yaml \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad/ \
+        --data-dir data/CREMA-ASIS/ \
         --lora-path finetuned_models/kimi-audio-lora/checkpoint
 
 Usage (Audio-Flamingo3):
@@ -30,13 +30,15 @@ Usage (Audio-Flamingo3):
         --model audio-flamingo3 --component llm \
         --model-config configs/models/audio_flamingo3.yaml \
         --csv data/CREMA-ASIS_meta.csv \
-        --data-dir data/crema-asis/cremad-sync-wsad/
+        --data-dir data/CREMA-ASIS/
 """
 
 import argparse
 import gc
 import sys
 import os
+os.environ['HF_HOME'] = '/mnt/cosmos_data/hf_cache'
+os.environ['TRANSFORMERS_CACHE'] = '/mnt/cosmos_data/hf_cache'
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pickle
