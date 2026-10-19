@@ -3,7 +3,10 @@
 # CREMA-ASIS
 <a href='https://arxiv.org/abs/2608.28966'>
 <img src='https://img.shields.io/badge/Paper-Arxiv-purple'></a>
+<a href='https://huggingface.co/datasets/WilliamHo1999/CREMA-ASIS'>
+<img src='https://img.shields.io/badge/Dataset-Hugging%20Face-yellow'></a>
 </div>
+
 This repository contains the code for our paper:
 
 ***When Vocal Tone and Literal Meaning Diverge: An Acoustic–Semantic Incongruity Study for Large Audio–Language Models***
@@ -22,7 +25,28 @@ Using this dataset, we evaluate three models: (1) Qwen2-Audio, (2) Audio-Flaming
 ---
 ## Dataset
 
-The download link for CREMA-ASIS will be provided upon acceptance.
+CREMA-ASIS is available on Hugging Face: [WilliamHo1999/CREMA-ASIS](https://huggingface.co/datasets/WilliamHo1999/CREMA-ASIS).
+
+```python
+from datasets import load_dataset
+
+ds = load_dataset("WilliamHo1999/CREMA-ASIS", split="test")
+ ```
+
+The scripts in this repository read WAV files from `data/CREMA-ASIS/`. To export the audio there (about 13 GB):
+
+ ```python
+ import os
+ from datasets import load_dataset, Audio
+
+ ds = load_dataset("WilliamHo1999/CREMA-ASIS").cast_column("audio", Audio(decode=False))
+ os.makedirs("data/CREMA-ASIS", exist_ok=True)
+ for split in ds.values():
+     for example in split:
+         with open(os.path.join("data/CREMA-ASIS", example["output_name"]), "wb") as f:
+             f.write(example["audio"]["bytes"])
+ ```
+
 
 ## Project structure
 
